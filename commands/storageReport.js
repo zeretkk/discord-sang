@@ -1,7 +1,8 @@
 const { MessageEmbed } = require('discord.js')
 const moment = require("moment");
 const getEmbed =(author, text, ref)=> {
-    let desc = `**Имя Фамилия:**\n${author.username} | ${author.tag} (<@${author.id}>)\n\n**Действие:**\n${text}${ref?`\n\n**Кто выдал/принял:**\n${ref.username} (<@${ref.id}>)`:''}`
+    let desc = `**Имя Фамилия:**\n${author.nickname} | ${author.user.tag} (<@${author.id}>)\n\n**Действие:**\n${text}${ref?`\n\n**Кто выдал/принял:**\n${ref.nickname} (<@${ref.id}>)`:''}`
+
     return new MessageEmbed()
         .setTitle('Отчет по оружию')
         .setDescription(desc)
@@ -10,6 +11,7 @@ const getEmbed =(author, text, ref)=> {
         })
         .setColor(15914195)
 }
+
 module.exports ={
     name:'отчет',
     aliases: [
@@ -17,6 +19,7 @@ module.exports ={
     ],
     async execute(message, args){
         await message.delete()
+        // console.log(message)
         const text =()=>{
             let prepared_string = args.toString().replaceAll(',', ' ')
             for(let [k, v] of message.mentions.users.concat(message.mentions.roles)){
@@ -24,8 +27,15 @@ module.exports ={
             }
             return prepared_string
         }
-        message.channel.send({
-            embeds: [getEmbed(message.author, text(), message.mentions.users.first())]
+
+        message.guild.members.fetch({user:[message.author.id, message.mentions.users.first().id]}).then(users=>{
+            message.channel.send({
+                embeds: [getEmbed(users.get(message.author.id),
+                    text(),
+                    users.get(message.mentions.users.first().id))]
+            })
         })
+
+
     }
 }
