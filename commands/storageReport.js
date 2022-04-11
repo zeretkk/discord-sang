@@ -28,11 +28,13 @@ module.exports ={
             return prepared_string
         }
 
-        message.guild.members.fetch({user:[message.author.id, message.mentions.users.first().id]}).then(users=>{
+        let users = message.mentions.users.first()?[message.author.id, message.mentions.users.first().id]:[message.author.id]
+
+        message.guild.members.fetch({user:users}).then(users=>{
             message.channel.send({
                 embeds: [getEmbed(users.get(message.author.id),
                     text(),
-                    users.get(message.mentions.users.first().id))]
+                    users.get(message.mentions.users.first()?.id))]
             })
         })
 
