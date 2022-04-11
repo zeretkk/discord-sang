@@ -17,10 +17,7 @@ client.on('messageCreate', message=>{
     let [cmd, args] = [message.content.split(' ')[0].slice(1).toLowerCase(), message.content.split(' ').slice(1)]
 
     if(message.channelId === storageChannel.toString() && !client.commands.has(cmd)){
-        message.reply('Форма подачи отчета: \`!отчет что взяли @кто-выдал(если кто-то выдавал)\`').then(()=>{
-            message.delete()
-        })
-
+        message.reply('Форма подачи отчета: \`!отчет что взяли @кто-выдал/принял(если с кем-то взаисодействовали)\`')
     }
     if(!client.commands.has(cmd)) return;
 
